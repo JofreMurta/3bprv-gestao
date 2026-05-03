@@ -725,6 +725,8 @@ function ouvirAtividades() {
 // ══════════════════════════════════════════════════════════════
 // CIÊNCIA AUTOMÁTICA
 // ══════════════════════════════════════════════════════════════
+let _cienciaRegistrada = false;
+
 function verificarCiencia() {
   if (opmAtual === "Batalhão") return;
   let novidades = false;
@@ -739,9 +741,13 @@ function verificarCiencia() {
   });
   if (novidades) {
     batch.commit();
-    const b = document.getElementById("banner-ciencia");
-    b.classList.add("visivel");
-    setTimeout(() => b.classList.remove("visivel"), 8000);
+    // Exibir banner apenas uma vez por sessão
+    if (!_cienciaRegistrada) {
+      _cienciaRegistrada = true;
+      const b = document.getElementById("banner-ciencia");
+      b.classList.add("visivel");
+      setTimeout(() => b.classList.remove("visivel"), 8000);
+    }
   }
 }
 
