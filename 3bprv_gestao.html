@@ -709,9 +709,10 @@ function ouvirAtividades() {
   db.collection("atividades")
     .orderBy("criadoEm", "desc")
     .onSnapshot(snap => {
+      const primeiroCarregamento = todasAtividades.length === 0;
       todasAtividades = [];
       snap.forEach(doc => todasAtividades.push({ id: doc.id, ...doc.data() }));
-      verificarCiencia();
+      if (primeiroCarregamento) verificarCiencia();
       renderAtividades();
       atualizarResumo();
       atualizarBadges();
@@ -725,8 +726,6 @@ function ouvirAtividades() {
 // ══════════════════════════════════════════════════════════════
 // CIÊNCIA AUTOMÁTICA
 // ══════════════════════════════════════════════════════════════
-let _cienciaRegistrada = false;
-
 function verificarCiencia() {
   if (opmAtual === "Batalhão") return;
   let novidades = false;
@@ -741,13 +740,9 @@ function verificarCiencia() {
   });
   if (novidades) {
     batch.commit();
-    // Exibir banner apenas uma vez por sessão
-    if (!_cienciaRegistrada) {
-      _cienciaRegistrada = true;
-      const b = document.getElementById("banner-ciencia");
-      b.classList.add("visivel");
-      setTimeout(() => b.classList.remove("visivel"), 8000);
-    }
+    const b = document.getElementById("banner-ciencia");
+    b.classList.add("visivel");
+    setTimeout(() => b.classList.remove("visivel"), 8000);
   }
 }
 
