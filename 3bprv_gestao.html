@@ -1239,10 +1239,6 @@ function salvarAtividade() {
   const modulo   = document.getElementById("f-modulo").value;
   const tipo     = document.getElementById("f-tipo").value;
   const prazo    = document.getElementById("f-prazo").value;
-    } catch(e) { ocultarLoading(); mostrarToast("Erro",4000); return; }
-  }
-    } catch(e) { ocultarLoading(); mostrarToast("Erro ao enviar arquivo: "+e.message,4000); return; }
-  }
 
   const salvarModelo  = document.getElementById("f-salvar-modelo").checked;
   const docRefLink    = document.getElementById("f-doc-ref-link").value.trim();
