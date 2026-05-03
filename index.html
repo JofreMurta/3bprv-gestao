@@ -411,6 +411,12 @@ main{flex:1;padding:1.5rem;max-width:1200px;margin:0 auto;width:100%}
         <option value="amarelo">Próximo ao vencimento</option>
         <option value="vermelho">Vencido</option>
       </select>
+      <label>Exibir:</label>
+      <select id="filtro-conclusao" onchange="renderAtividades()">
+        <option value="pendentes">Pendentes</option>
+        <option value="todas">Todas</option>
+        <option value="cumpridas">Cumpridas</option>
+      </select>
     </div>
 
     <div class="atividades-lista" id="lista-atividades"></div>
@@ -695,6 +701,7 @@ function iniciarApp() {
     document.getElementById("btn-nova-atividade").style.display = "none";
     document.getElementById("filtro-opm").value = opmAtual;
     document.getElementById("filtro-opm").disabled = true;
+    document.getElementById("filtro-conclusao").value = "pendentes";
     document.getElementById("rel-opm").value = opmAtual;
     document.getElementById("rel-opm").disabled = true;
   }
@@ -781,6 +788,8 @@ function renderAtividades() {
   const filtroOpm    = document.getElementById("filtro-opm").value;
   const filtroStatus = document.getElementById("filtro-status").value;
 
+  const filtroConclusao = document.getElementById("filtro-conclusao").value;
+
   let ats = todasAtividades.filter(a => a.modulo === moduloAtual);
   if (opmAtual !== "Batalhão") {
     ats = ats.filter(a => a.opms && a.opms.includes(opmAtual));
@@ -788,6 +797,23 @@ function renderAtividades() {
     ats = ats.filter(a => a.opms && a.opms.includes(filtroOpm));
   }
   if (filtroStatus) ats = ats.filter(a => calcularStatus(a.prazo) === filtroStatus);
+
+  // Filtro de conclusão
+  if (filtroConclusao === "pendentes") {
+    ats = ats.filter(at => {
+      const opmsAlvo = opmAtual !== "Batalhão"
+        ? [opmAtual]
+        : (filtroOpm ? [filtroOpm] : (at.opms || []));
+      return opmsAlvo.some(o => !(at.cumprimentos || {})[o]);
+    });
+  } else if (filtroConclusao === "cumpridas") {
+    ats = ats.filter(at => {
+      const opmsAlvo = opmAtual !== "Batalhão"
+        ? [opmAtual]
+        : (filtroOpm ? [filtroOpm] : (at.opms || []));
+      return opmsAlvo.every(o => !!(at.cumprimentos || {})[o]);
+    });
+  }
 
   if (!ats.length) {
     lista.innerHTML = '<div class="vazio">📋<p>Nenhuma atividade encontrada.</p></div>';
@@ -1619,8 +1645,8 @@ function trocarPerfilDemo(perfil) {
   if(mostrandoModelos && opmAtual!=="Batalhão"){toggleModelos();}
   const selFiltro=document.getElementById("filtro-opm");
   const selRel=document.getElementById("rel-opm");
-  if(opmAtual==="Batalhão"){selFiltro.value="";selFiltro.disabled=false;selRel.disabled=false;}
-  else{selFiltro.value=opmAtual;selFiltro.disabled=true;selRel.value=opmAtual;selRel.disabled=true;}
+  if(opmAtual==="Batalhão"){selFiltro.value="";selFiltro.disabled=false;selRel.disabled=false;document.getElementById("filtro-conclusao").value="pendentes";}
+  else{selFiltro.value=opmAtual;selFiltro.disabled=true;document.getElementById("filtro-conclusao").value="pendentes";selRel.value=opmAtual;selRel.disabled=true;}
   renderAtividades();atualizarResumo();atualizarBadges();
 }
 
