@@ -1240,6 +1240,19 @@ function salvarAtividade() {
   const tipo     = document.getElementById("f-tipo").value;
   const prazo    = document.getElementById("f-prazo").value;
 
+  let opms = [];
+  if (tipo === "coletiva") {
+    opms = [...document.querySelectorAll(".checkgroup input:checked")].map(cb => cb.value);
+  } else {
+    opms = [document.getElementById("f-opm-unica").value];
+  }
+
+  if (!titulo)      { mostrarToast("Informe o titulo.", 2500); return; }
+  if (!prazo)       { mostrarToast("Informe o prazo.", 2500); return; }
+  if (!opms.length) { mostrarToast("Selecione ao menos uma OPM.", 2500); return; }
+
+  mostrarLoading();
+
   const salvarModelo  = document.getElementById("f-salvar-modelo").checked;
   const docRefLink    = document.getElementById("f-doc-ref-link").value.trim();
   const docRefNome    = document.getElementById("f-doc-ref-nome").value.trim();
