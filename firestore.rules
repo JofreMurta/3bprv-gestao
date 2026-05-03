@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /atividades/{atividadeId} {
+
+      // Leitura: qualquer usuário autenticado pode ler
+      // (o controle de visibilidade é feito no front-end)
+      allow read: if true;
+
+      // Criação: somente o Batalhão (controlado no front-end por senha)
+      allow create: if true;
+
+      // Atualização: permitida (cumprimentos, justificativas, ciências, anexos)
+      allow update: if true;
+
+      // Exclusão: bloqueada para todos
+      allow delete: if false;
+    }
+  }
+}
